@@ -1,5 +1,4 @@
 package bg.codeacademy.spring.gossiptalks.validation;
-
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
