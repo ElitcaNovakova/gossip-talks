@@ -5,19 +5,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class CreateGossipRequest {
-
   @NotNull
-  @Size(min = 2, max = 255)
+  @Size(max = 255)
   @ValidText
   private String text;
-
   public String getText() {
     return text;
   }
 
-  public CreateGossipRequest setText(String text) {
+  public CreateGossipRequest setText( @ValidText String text) {
     this.text = text;
     return this;
   }
 }
-
