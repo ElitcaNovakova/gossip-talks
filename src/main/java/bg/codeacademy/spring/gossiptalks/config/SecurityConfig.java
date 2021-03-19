@@ -20,14 +20,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+
     http.csrf()
         /**/.disable()
         .cors()
         /**/.disable()
         .headers()
         /**/.frameOptions().sameOrigin().and()
-        .formLogin()
-        /**/.and()
         .httpBasic()
         /**/.and()
         .logout()
@@ -36,12 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         /**/.antMatchers("/h2-console/**").permitAll()
         /**/.antMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-        /**/.antMatchers("/**").permitAll()//????
-        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-    // /**/.antMatchers("/**").authenticated();
-
-    //
-
+        /**/.antMatchers("/api/v1/**").authenticated();
   }
 
   @Bean
