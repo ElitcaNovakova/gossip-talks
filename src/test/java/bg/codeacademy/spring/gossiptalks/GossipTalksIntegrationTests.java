@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("dev")
 // Run the spring application on a random web port
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
+//@Disabled
 public class GossipTalksIntegrationTests {
 
   private static final String DEFAULT_PASS = "p@ssworD1longenough";
@@ -80,7 +80,7 @@ public class GossipTalksIntegrationTests {
         .post("/api/v1/users")
         // test
         .then()
-        .statusCode(not(oneOf(OK.value(), CREATED.value())));
+        .statusCode(is(not(oneOf(OK.value(), CREATED.value()))));
   }
 
   @Test
@@ -138,7 +138,7 @@ public class GossipTalksIntegrationTests {
         .statusCode(OK.value())
         .body("email", is("getusersme@mail.com"))
         .body("username", is("getusersme"))
-        .body("name", emptyOrNullString());
+        .body("name", is("getusersme"));
   }
 
   @Test
@@ -156,7 +156,7 @@ public class GossipTalksIntegrationTests {
         .post("/api/v1/gossips")
         // test
         .then()
-        .statusCode(not(OK.value()));
+        .statusCode(is(not(OK.value())));
   }
 
 
@@ -282,6 +282,7 @@ public class GossipTalksIntegrationTests {
         // prepare
         .multiPart("email", name + "@mail.com")
         .multiPart("username", name)//'^[a-z0-8\\.\\-]+$'
+        .multiPart("name", name)
         .multiPart("password", DEFAULT_PASS)
         .multiPart("passwordConfirmation", DEFAULT_PASS)
         // do
@@ -314,7 +315,7 @@ public class GossipTalksIntegrationTests {
         .body()
         .jsonPath();
 
-    final String datetime = jsonPath.getString("datetime");
+    final String datetime = jsonPath.getString("dateTime");
     OffsetDateTime _then = OffsetDateTime.parse(datetime);
     OffsetDateTime _now = OffsetDateTime.now();
     Assertions.assertTrue(Duration.between(_then, _now).toMillis() < 3000);

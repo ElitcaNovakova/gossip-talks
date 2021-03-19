@@ -5,11 +5,9 @@ import bg.codeacademy.spring.gossiptalks.repository.GossipRepository;
 import bg.codeacademy.spring.gossiptalks.repository.UserRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -51,14 +49,14 @@ public class UserService implements UserDetailsService {
         .setUsername(userName)
         .setPassword(passwordEncoder.encode(userPassword))
         .setRegistrationTime(OffsetDateTime.now())
+        .setFollowers(new HashSet<User>())
         .setLastLoginTime(OffsetDateTime.now())
         .setEmail(userEmail)
         .setName(name)
     );
   }
 
-
-  public User changePassword(String newPassword, String passwordConfirmation,
+  public User changePassword(String currentName, String newPassword, String passwordConfirmation,
       String oldPassword) {
 
     if (!passwordConfirmation.equals(newPassword)) {
@@ -68,7 +66,7 @@ public class UserService implements UserDetailsService {
       throw new IllegalArgumentException("The passwords are the same");
     }
     //set new password and save
-    User user = getCurrentUser();
+    User user = getCurrentUser(currentName);
     if (user == null) {
       throw new UsernameNotFoundException("The user have to loggin");
     }
@@ -85,20 +83,20 @@ public class UserService implements UserDetailsService {
     }
     if (follow) {
       //add User to Followers
-      currentUser.getFollowers().add(user);
+      user.getFollowers().add(currentUser);
 
     } else {
       //remove from Followers
-      currentUser.getFollowers().remove(user);
+      user.getFollowers().remove(currentUser);
     }
-    return userRepository.save(currentUser);
+    return userRepository.save(user);
   }
 
-  public List<User> getUsers() {
-    return getUsers("", false);
+  public List<User> getUsers(User currentUser) {
+    return getUsers(currentUser, "", false);
   }
 
-  public List<User> getUsers(String name, boolean f) {
+  public List<User> getUsers(User currentUser, String name, boolean f) {
     List<User> userList = new ArrayList<>();
     int pageNumber = 0;
     int pageSize = 20;
@@ -107,16 +105,17 @@ public class UserService implements UserDetailsService {
       userList.addAll(userRepository.findByNameContainsIgnoreCase(name));
     } else {
       if (name != null) {
-        User currentUser = getCurrentUser();
+
         userList = currentUser.getFollowers().stream()
             .filter(user -> (user.getUsername().toUpperCase().contains(name.toUpperCase())))
             .collect(Collectors.toList());
-        userList.addAll(currentUser.getFollowers().stream()
-            .filter(user -> (user.getName().toUpperCase().contains(name.toUpperCase())))
-            .collect(Collectors.toList()));
+        if (userList.isEmpty()) {
+          userList.addAll(currentUser.getFollowers().stream()
+              .filter(user -> (user.getName().toUpperCase().contains(name.toUpperCase())))
+              .collect(Collectors.toList()));
+        }
       }
     }
-
     return userList.stream()
         .distinct()
         .sorted((User u1, User u2) ->
@@ -128,14 +127,7 @@ public class UserService implements UserDetailsService {
         .collect(Collectors.toList());
   }
 
-
-  public User getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username = authentication.getName();
-    if (!(authentication instanceof AnonymousAuthenticationToken)) {
-      username = authentication.getName();
-    }
+  public User getCurrentUser(String username) {
     return userRepository.findByUsername(username);
   }
-
 }

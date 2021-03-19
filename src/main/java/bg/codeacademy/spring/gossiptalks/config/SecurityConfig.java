@@ -26,8 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /**/.disable()
         .headers()
         /**/.frameOptions().sameOrigin().and()
-        .formLogin()
-        /**/.and()
         .httpBasic()
         /**/.and()
         .logout()
@@ -36,11 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         /**/.antMatchers("/h2-console/**").permitAll()
         /**/.antMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-        /**/.antMatchers("/**").permitAll();//????
-    // /**/.antMatchers("/**").authenticated();
-
-    //
-
+        /**/.antMatchers("/api/v1/**").authenticated();
   }
 
   @Bean

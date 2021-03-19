@@ -8,14 +8,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource
 public interface UserRepository extends JpaRepository<User, Long> {
 
-
   User findByUsername(String username);
 
   List<User> findByUsernameContainsIgnoreCase(String username);
 
   List<User> findByNameContainsIgnoreCase(String name);
 
-  List<User> findByFollowers_Id(long id);
-
+  List<User> findByFollowers_Id(Long id);
 
 }

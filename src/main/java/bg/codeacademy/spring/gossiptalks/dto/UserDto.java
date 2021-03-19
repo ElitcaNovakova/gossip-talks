@@ -12,8 +12,6 @@ public class UserDto {
   private OffsetDateTime lastLoginTime;
   private boolean following;
 
-
-
   public String getName() {
     return name;
   }
@@ -22,7 +20,6 @@ public class UserDto {
     this.name = name;
     return this;
   }
-
   public String getEmail() {
     return email;
   }
@@ -31,7 +28,6 @@ public class UserDto {
     this.email = email;
     return this;
   }
-
   public String getUsername() {
     return username;
   }

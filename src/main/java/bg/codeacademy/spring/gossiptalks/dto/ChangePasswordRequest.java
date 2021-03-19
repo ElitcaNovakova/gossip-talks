@@ -12,7 +12,6 @@ public class ChangePasswordRequest {
   @ValidPassword
   private String newPassword;
 
-
   public String getOldPassword() {
     return oldPassword;
   }
@@ -21,7 +20,6 @@ public class ChangePasswordRequest {
     this.oldPassword = oldPassword;
     return this;
   }
-
   public String getNewPassword() {
     return newPassword;
   }

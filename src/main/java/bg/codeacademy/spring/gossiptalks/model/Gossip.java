@@ -72,7 +72,7 @@ public class Gossip {
       return false;
     }
     Gossip gossip = (Gossip) o;
-    return id == gossip.id &&
+    return
         text.equals(gossip.text) &&
         dateTime.equals(gossip.dateTime);
   }

@@ -15,7 +15,6 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
           .addConstraintViolation();
       return false;
     }
-
     boolean upper = false;
     boolean lower = false;
     boolean digit = false;

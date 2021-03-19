@@ -2,6 +2,7 @@ package bg.codeacademy.spring.gossiptalks.dto;
 
 import com.sun.istack.NotNull;
 import java.util.List;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 public class GossipList {
@@ -10,13 +11,14 @@ public class GossipList {
   @NotNull
   private int pageNumber;
   @NotNull
+  @Min(value = 0)
+  @Max(value = 50)
   private int pageSize;
   @NotNull
   private int count;
   @NotNull
   private int total;
-  private List<GossipDto> content;
-
+  private List<Gossip> content;
 
   public int getPageNumber() {
     return pageNumber;
@@ -26,7 +28,6 @@ public class GossipList {
     this.pageNumber = pageNumber;
     return this;
   }
-
   public int getPageSize() {
     return pageSize;
   }
@@ -35,7 +36,6 @@ public class GossipList {
     this.pageSize = pageSize;
     return this;
   }
-
   public int getCount() {
     return count;
   }
@@ -44,7 +44,6 @@ public class GossipList {
     this.count = count;
     return this;
   }
-
   public int getTotal() {
     return total;
   }
@@ -53,12 +52,11 @@ public class GossipList {
     this.total = total;
     return this;
   }
-
-  public List<GossipDto> getContent() {
+  public List<Gossip> getContent() {
     return content;
   }
 
-  public GossipList setContent(List<GossipDto> content) {
+  public GossipList setContent(List<Gossip> content) {
     this.content = content;
     return this;
   }

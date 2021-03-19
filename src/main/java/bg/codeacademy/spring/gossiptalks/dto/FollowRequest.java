@@ -9,7 +9,6 @@ public class FollowRequest {
   public boolean isFollow() {
     return follow;
   }
-
   public FollowRequest(boolean follow) {
     this.follow = follow;
   }

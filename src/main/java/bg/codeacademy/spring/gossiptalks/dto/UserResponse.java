@@ -10,7 +10,7 @@ public class UserResponse {
   @Email
   private String email;
   @NotNull
-  @Pattern(regexp = "^[a-z0-8\\.\\-]+$")
+  @Pattern(regexp = "^[a-z0-8\\\\.\\-]+$")
   private String username;
   private String name;
   private boolean following;
