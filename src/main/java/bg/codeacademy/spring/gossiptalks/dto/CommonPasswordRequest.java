@@ -1,17 +1,13 @@
 package bg.codeacademy.spring.gossiptalks.dto;
 
-
 import javax.validation.constraints.NotNull;
 
 public class CommonPasswordRequest {
 
   @NotNull
   private String password;
-
   @NotNull
   private String passwordConfirmation;
-
-
 
   public String getPassword() {
     return password;
@@ -21,7 +17,6 @@ public class CommonPasswordRequest {
     this.password = password;
     return this;
   }
-
   public String getPasswordConfirmation() {
     return passwordConfirmation;
   }
@@ -30,6 +25,5 @@ public class CommonPasswordRequest {
     this.passwordConfirmation = passwordConfirmation;
     return this;
   }
-
 
 }
