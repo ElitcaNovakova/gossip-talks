@@ -16,9 +16,6 @@ public class Gossip extends CreateGossipRequest {
   @NotNull
   private OffsetDateTime dateTime;
 
-
-
-
   public String getUsername() {
     return username;
   }
@@ -36,7 +33,6 @@ public class Gossip extends CreateGossipRequest {
     this.id = id;
     return this;
   }
-
   public OffsetDateTime getDateTime() {
     return dateTime;
   }
