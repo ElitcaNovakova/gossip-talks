@@ -29,7 +29,7 @@ public class OpenApiValidationConfig implements WebMvcConfigurer {
   public Filter validationFilter() {
     return new OpenApiValidationFilter(
         true, // enable request validation
-        true  // enable response validation
+        false  // enable response validation
     );
   }
 
