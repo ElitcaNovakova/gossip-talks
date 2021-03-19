@@ -3,18 +3,36 @@ package bg.codeacademy.spring.gossiptalks.validation;
 import java.util.regex.Pattern;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.apache.http.util.TextUtils;
 
 public class TextValidator implements ConstraintValidator<ValidText, String> {
-  private static final String HTML_TAG_PATTERN = "<(\"[^\"]*\"|'[^']*'|[^'\">])*>";
+
+  public final static String tagStart =
+      "\\<\\w+((\\s+\\w+(\\s*\\=\\s*(?:\".*?\"|'.*?'|[^'\"\\>\\s]+))?)+\\s*|\\s*)\\>";
+  public final static String tagEnd =
+      "\\</\\w+\\>";
+  public final static String tagSelfClosing =
+      "\\<\\w+((\\s+\\w+(\\s*\\=\\s*(?:\".*?\"|'.*?'|[^'\"\\>\\s]+))?)+\\s*|\\s*)/\\>";
+  public final static String htmlEntity =
+      "&[a-zA-Z][a-zA-Z0-9]+;";
+  public final static String tagSelfClosingWithAtributs = "<(\\w+)(.+?)/>";
+  public final static String tagWithAttributs = "[\\S\\s]*\\<html[\\S\\s]*\\>[\\S\\s]*\\<\\/html[\\S\\s]*\\>[\\S\\s]*";
+  public final static Pattern htmlPattern = Pattern.compile(
+      "(" + tagStart + ".*" + tagEnd + ")|(" + tagSelfClosing + ")|"
+          + "(" + htmlEntity + ")|(" + tagSelfClosingWithAtributs + ")|(" + tagWithAttributs + ")",
+      Pattern.DOTALL
+  );
+
   @Override
   public boolean isValid(String text, ConstraintValidatorContext context) {
-    Pattern htmlValidator = TextUtils.isEmpty(HTML_TAG_PATTERN) ? null:Pattern.compile(HTML_TAG_PATTERN);
-    if(htmlValidator !=null) {
-      if(htmlValidator.matcher(text).find()){
+    if (text != null) {
+      if (htmlPattern.matcher(text).find()) {
         return false;
+      } else {
+        return true;
       }
+    } else {
+      return false;
     }
-    return true;
   }
+
 }
