@@ -13,12 +13,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource
 public interface GossipRepository extends JpaRepository<Gossip, Long> {
 
-  List<Gossip> findByAuthor_Id(long Id);
+  List<Gossip> findByAuthor_Id(Long Id);
 
   Page<Gossip> findByAuthor_Username(String author, Pageable pageable);
 
-  Page<Gossip> findByAuthorIn(Collection<User> friends, Pageable pageable);
-
-  //List<Gossip> findByTextAndDateTimeLike(String text, OffsetDateTime dateTime);
+  Page<Gossip> findByAuthorInOrderByDateTime(Collection<User> friends, Pageable pageable);
 
 }
