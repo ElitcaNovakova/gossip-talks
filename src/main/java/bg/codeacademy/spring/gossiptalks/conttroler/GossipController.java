@@ -1,8 +1,7 @@
 package bg.codeacademy.spring.gossiptalks.conttroler;
 
-import bg.codeacademy.spring.gossiptalks.dto.GossipDto;
+import bg.codeacademy.spring.gossiptalks.dto.Gossip;
 import bg.codeacademy.spring.gossiptalks.dto.GossipList;
-import bg.codeacademy.spring.gossiptalks.model.Gossip;
 import bg.codeacademy.spring.gossiptalks.model.User;
 import bg.codeacademy.spring.gossiptalks.service.GossipService;
 import bg.codeacademy.spring.gossiptalks.service.UserService;
@@ -41,36 +40,36 @@ public class GossipController {
       @Min(0) @RequestParam(value = "pageNo", required = false, defaultValue = "0") Integer pageNo,
       @Min(0) @Max(50) @RequestParam(value = "pageSize", required = false, defaultValue = "0") Integer pageSize) {
     User user = userService.getCurrentUser();
-    Page<Gossip> gossips = gossipService.getGossips(pageNo, pageSize, user);
+    Page<bg.codeacademy.spring.gossiptalks.model.Gossip> gossips = gossipService.getGossips(pageNo, pageSize, user);
     return toDTO(gossips);
   }
 
   @PostMapping(consumes = {"multipart/form-data"})
-  public GossipDto postGossip(
+  public Gossip postGossip(
       @RequestPart(value = "text", required = true) String text) {
     User user = userService.getCurrentUser();
-    Gossip gossip = gossipService.createGossip(text, user);
+    bg.codeacademy.spring.gossiptalks.model.Gossip gossip = gossipService.createGossip(text, user);
     return toDTO(gossip);
   }
 
-  static GossipDto toDTO(Gossip gossip) {
+  static Gossip toDTO(bg.codeacademy.spring.gossiptalks.model.Gossip gossip) {
     String id = Long.toString(gossip.getId(), 32);
     DateTimeFormatter fm = DateTimeFormatter.ISO_DATE_TIME;
-    return new GossipDto()
+    return new Gossip()
         .setId(id)
         .setText(gossip.getText())
         .setUsername(gossip.getAuthor().getUsername())
         .setDateTime(fm.format(gossip.getDateTime()));
   }
 
-  static GossipList toDTO(Page<Gossip> page) {
+  static GossipList toDTO(Page<bg.codeacademy.spring.gossiptalks.model.Gossip> page) {
     return new GossipList()
         .setPageNumber(page.getNumber())
         .setPageSize(page.getSize())
         .setCount(page.getNumberOfElements())
         .setTotal((int) page.getTotalElements())
         .setContent(page.getContent().stream()
-            .sorted((Gossip g1, Gossip g2) ->
+            .sorted((bg.codeacademy.spring.gossiptalks.model.Gossip g1, bg.codeacademy.spring.gossiptalks.model.Gossip g2) ->
                 g2.getDateTime().compareTo(g1.getDateTime()))
             .map(model -> toDTO(model))
             .collect(Collectors.toList())

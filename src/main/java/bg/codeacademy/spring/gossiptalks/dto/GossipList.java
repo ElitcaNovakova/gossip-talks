@@ -15,7 +15,7 @@ public class GossipList {
   private int count;
   @NotNull
   private int total;
-  private List<GossipDto> content;
+  private List<Gossip> content;
 
 
   public int getPageNumber() {
@@ -54,11 +54,11 @@ public class GossipList {
     return this;
   }
 
-  public List<GossipDto> getContent() {
+  public List<Gossip> getContent() {
     return content;
   }
 
-  public GossipList setContent(List<GossipDto> content) {
+  public GossipList setContent(List<Gossip> content) {
     this.content = content;
     return this;
   }
