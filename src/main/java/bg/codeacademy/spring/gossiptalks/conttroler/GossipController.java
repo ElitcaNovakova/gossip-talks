@@ -1,6 +1,5 @@
 package bg.codeacademy.spring.gossiptalks.conttroler;
 
-
 import bg.codeacademy.spring.gossiptalks.dto.GossipDto;
 import bg.codeacademy.spring.gossiptalks.dto.GossipList;
 import bg.codeacademy.spring.gossiptalks.model.Gossip;
