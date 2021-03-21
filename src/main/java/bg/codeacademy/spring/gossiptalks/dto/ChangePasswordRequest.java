@@ -20,6 +20,7 @@ public class ChangePasswordRequest {
     this.oldPassword = oldPassword;
     return this;
   }
+
   public String getNewPassword() {
     return newPassword;
   }

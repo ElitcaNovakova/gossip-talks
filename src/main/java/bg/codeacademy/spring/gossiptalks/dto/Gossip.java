@@ -33,6 +33,7 @@ public class Gossip extends CreateGossipRequest {
     this.id = id;
     return this;
   }
+
   public OffsetDateTime getDateTime() {
     return dateTime;
   }

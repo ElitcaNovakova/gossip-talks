@@ -20,6 +20,7 @@ public class UserDto {
     this.name = name;
     return this;
   }
+
   public String getEmail() {
     return email;
   }
@@ -28,6 +29,7 @@ public class UserDto {
     this.email = email;
     return this;
   }
+
   public String getUsername() {
     return username;
   }
@@ -54,6 +56,7 @@ public class UserDto {
     this.registrationTime = registrationTime;
     return this;
   }
+
   public OffsetDateTime getLastLoginTime() {
     return lastLoginTime;
   }

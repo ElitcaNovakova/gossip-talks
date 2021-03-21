@@ -4,9 +4,9 @@ import bg.codeacademy.spring.gossiptalks.model.User;
 import bg.codeacademy.spring.gossiptalks.repository.GossipRepository;
 import bg.codeacademy.spring.gossiptalks.repository.UserRepository;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,8 +32,13 @@ public class UserService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-    return userRepository.findByUsername(s);
+    User user = userRepository.findByUsername(s);
+    if (user == null) {
+      throw new UsernameNotFoundException("The user have to loggin");
+    }
+    return user;
   }
+
 
   public User register(String userName, String userPassword, String passConfirmation,
       String userEmail,
@@ -66,13 +71,12 @@ public class UserService implements UserDetailsService {
       throw new IllegalArgumentException("The passwords are the same");
     }
     //set new password and save
-    User user = getCurrentUser(currentName);
+    User user = requireUser(currentName);
     if (user == null) {
       throw new UsernameNotFoundException("The user have to loggin");
     }
     user.setPassword(passwordEncoder.encode(newPassword));
-    userRepository.save(user);
-    return user;
+    return userRepository.save(user);
   }
 
   public User followUser(User currentUser, String username, boolean follow) {
@@ -97,37 +101,33 @@ public class UserService implements UserDetailsService {
   }
 
   public List<User> getUsers(User currentUser, String name, boolean f) {
-    List<User> userList = new ArrayList<>();
-    int pageNumber = 0;
-    int pageSize = 20;
+    Set<User> userList = null;
     if (!f) {
-      userList = userRepository.findByUsernameContainsIgnoreCase(name);
-      userList.addAll(userRepository.findByNameContainsIgnoreCase(name));
+
+     userList = userRepository.findByUsernameOrNameContainingAllIgnoreCase(name,name);
     } else {
       if (name != null) {
-
+        String match = name.toUpperCase();
         userList = currentUser.getFollowers().stream()
-            .filter(user -> (user.getUsername().toUpperCase().contains(name.toUpperCase())))
-            .collect(Collectors.toList());
-        if (userList.isEmpty()) {
-          userList.addAll(currentUser.getFollowers().stream()
-              .filter(user -> (user.getName().toUpperCase().contains(name.toUpperCase())))
-              .collect(Collectors.toList()));
-        }
+            .filter(user ->
+                (user.getUsername().toUpperCase().contains(match)) ||
+                    (user.getName().toUpperCase().contains(match)))
+            .collect(Collectors.toSet());
       }
     }
     return userList.stream()
-        .distinct()
         .sorted((User u1, User u2) ->
-            (gossipRepository.findByAuthor_Id(u1.getId())).size() <
-                (gossipRepository.findByAuthor_Id(u2.getId())).size() ?
+            (u1.getNumberGossip() < u2.getNumberGossip()) ?
                 -1 : 1)
-        .skip(pageNumber * pageSize)
-        .limit(pageSize)
         .collect(Collectors.toList());
   }
 
-  public User getCurrentUser(String username) {
-    return userRepository.findByUsername(username);
+
+  public User requireUser(String username) {
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UsernameNotFoundException("The user have to loggin");
+    }
+    return user;
   }
 }

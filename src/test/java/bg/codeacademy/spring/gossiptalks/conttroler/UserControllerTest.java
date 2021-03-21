@@ -161,7 +161,7 @@ class UserControllerTest {
 
   @Test
   @Transactional
-  @WithMockUser(username = "user2")
+  @WithMockUser(username = "user3")
   void given_follow_user_When_username_is_right_Then_succeed() throws Exception {
     createUser("user3");
     mvc.perform(post("/api/v1/users/{username}/follow", "user3")

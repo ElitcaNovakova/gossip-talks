@@ -39,6 +39,7 @@ public class User implements UserDetails {
   @NotNull
   private OffsetDateTime registrationTime;
   private OffsetDateTime lastLoginTime;
+  private int numberGossip;
 
   @ManyToMany
   private Set<User> followers;
@@ -118,6 +119,14 @@ public class User implements UserDetails {
   public User setFollowers(Set<User> followers) {
     this.followers = followers;
     return this;
+  }
+
+  public int getNumberGossip() {
+    return numberGossip;
+  }
+
+  public void setNumberGossip(int numberGossip) {
+    this.numberGossip = numberGossip;
   }
 
   @Override

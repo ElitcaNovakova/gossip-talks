@@ -11,18 +11,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
 @SpringBootTest
-  @AutoConfigureMockMvc
-  public class LoginTest {
-    @Autowired
-    private MockMvc mvc;
+@AutoConfigureMockMvc
+public class LoginTest {
 
-    @Test
-    public void Login_with_user_should_succeed() throws Exception {
-      mvc.perform(MockMvcRequestBuilders.post("/login")
-          .param("username", "user")
-          .param("password", "user"))
-          .andDo(MockMvcResultHandlers.print());
-    }
+  @Autowired
+  private MockMvc mvc;
+
+  @Test
+  public void Login_with_user_should_succeed() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.post("/login")
+        .param("username", "user")
+        .param("password", "user"))
+        .andDo(MockMvcResultHandlers.print());
   }
+}
 
 

@@ -1,10 +1,10 @@
 package bg.codeacademy.spring.gossiptalks.service;
+
 import bg.codeacademy.spring.gossiptalks.model.Gossip;
 import bg.codeacademy.spring.gossiptalks.model.User;
 import bg.codeacademy.spring.gossiptalks.repository.GossipRepository;
 import bg.codeacademy.spring.gossiptalks.repository.UserRepository;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -98,8 +97,6 @@ class UserServiceTest {
     // 2.setup user to follow
     User toFollow = newUser("toFollow@abv.bg");
     // 3. setup db mock to return 1 & 2
-    // казвам на мокнатото repository какво да прави
-    // когато се викне findByUser трябва да върне toFollow
     when(userRepository.findByUsername(any()))
         .thenReturn(toFollow);
     // 4. call follow
@@ -134,8 +131,6 @@ class UserServiceTest {
   void when_user_exist_And_password_Match_to_passwordConfirmation_changePassword_Must_succeed() {
     User current = newUser("xyz@abv.bg");
     String newPass = "newPass";
-    // казвам на мокнатото repository какво да прави
-    // когато се викне findByUser трябва да върне current
     when(userRepository.findByUsername(any()))
         .thenReturn(current);
     userService.changePassword("newPass", newPass, newPass, "xyz");
@@ -222,39 +217,41 @@ class UserServiceTest {
   void when_get_users_if_follow_is_false_and_username_is_null() {
     User current = newUser("current@abv.bg");
     userService.getUsers(current, "", false);
-    verify(userRepository, times(1)).findByUsernameContainsIgnoreCase(any());
-    verify(userRepository, times(1)).findByNameContainsIgnoreCase(any());
+//    verify(userRepository, times(1)).findByUsernameContainsIgnoreCase(any());
+//    verify(userRepository, times(1)).findByNameContainsIgnoreCase(any());
+    verify(userRepository, times(1)).findByUsernameOrNameContainingAllIgnoreCase(any(),any());
   }
 
   @Test
   void when_get_users_and_follow_is_true_and_username_is_not_null() {
     User current = newUser("current@abv.bg");
-    List<Gossip> gossips1 = new ArrayList<Gossip>();
-    List<Gossip> gossips2 = new ArrayList<Gossip>();
+
     User user1 = new User().setUsername("alalala").setName("Follow").setPassword("pass")
         .setEmail("current@abv.bg");
     User user2 = new User().setUsername("alalal1").setName("follow").setPassword("pass")
         .setEmail("current@abv.bg");
+    User user3 = new User().setUsername("follow").setName("fgfdggfd").setPassword("pass")
+        .setEmail("current@abv.bg");
     current.getFollowers().add(user1);
     current.getFollowers().add(user2);
+    current.getFollowers().add(user3);
     Gossip gossip1 = newGossip("text1").setAuthor(user1);
     Gossip gossip2 = newGossip("text2").setAuthor(user1);
-    gossips1.add(gossip1);
-    gossips1.add(gossip2);
-    Gossip gossip3 = newGossip("text1").setAuthor(user2);
-    Gossip gossip4 = newGossip("text2").setAuthor(user2);
-    Gossip gossip5 = newGossip("text2").setAuthor(user2);
-    gossips2.add(gossip3);
-    gossips2.add(gossip4);
-    gossips2.add(gossip5);
-    when(gossipRepository.findByAuthor_Id(user1.getId()))
-        .thenReturn(gossips1);
-    when(gossipRepository.findByAuthor_Id(user2.getId()))
-        .thenReturn(gossips2);
-    List<User> userList = userService.getUsers(current, "follow", true);
 
-    assertEquals(userList.size(), 2);
-    assertTrue(userList.get(0).equals(user2) && userList.get(1).equals(user1));
-    verify(gossipRepository, times(2)).findByAuthor_Id(any());
+    Gossip gossip3 = newGossip("text3").setAuthor(user2);
+    Gossip gossip4 = newGossip("text4").setAuthor(user2);
+    Gossip gossip5 = newGossip("text5").setAuthor(user2);
+    Gossip gossip6 = newGossip("text6").setAuthor(user3);
+    Gossip gossip7 = newGossip("text7").setAuthor(user3);
+    Gossip gossip8 = newGossip("text8").setAuthor(user3);
+    Gossip gossip9 = newGossip("text9").setAuthor(user3);
+
+
+    List<User> userList = userService.getUsers(current, "follow", true);
+    assertEquals(userList.size(), 3);
+    assertTrue(userList.get(0).equals(user3));
+    assertTrue(userList.get(0).equals(user3) && userList.get(1).equals(user2)&&userList.get(2).equals(user1));
+
   }
+
 }

@@ -1,6 +1,5 @@
 package bg.codeacademy.spring.gossiptalks.repository;
 
-
 import bg.codeacademy.spring.gossiptalks.model.Gossip;
 import bg.codeacademy.spring.gossiptalks.model.User;
 import java.util.Collection;
@@ -17,6 +16,6 @@ public interface GossipRepository extends JpaRepository<Gossip, Long> {
 
   Page<Gossip> findByAuthor_Username(String author, Pageable pageable);
 
-  Page<Gossip> findByAuthorInOrderByDateTime(Collection<User> friends, Pageable pageable);
+  Page<Gossip> findByAuthorIn(Collection<User> friends, Pageable pageable);
 
 }

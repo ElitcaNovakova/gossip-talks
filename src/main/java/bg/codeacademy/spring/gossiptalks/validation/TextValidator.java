@@ -25,11 +25,7 @@ public class TextValidator implements ConstraintValidator<ValidText, String> {
   @Override
   public boolean isValid(String text, ConstraintValidatorContext context) {
     if (text != null) {
-      if (htmlPattern.matcher(text).find()) {
-        return false;
-      } else {
-        return true;
-      }
+      return !htmlPattern.matcher(text).find();
     } else {
       return false;
     }

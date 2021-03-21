@@ -84,7 +84,6 @@ class GossipControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser(username = "user12")
   void given_valid_paging_When_get_gossips_Then_pass() throws Exception {
     User user1 = createUser("user11");
@@ -103,7 +102,6 @@ class GossipControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser(username = "user8")
   void given_save_new_correct_gossip() throws Exception {
     createUser("user8");
@@ -118,7 +116,6 @@ class GossipControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser(username = "user10")
   void given_save_new_gossip_containing_html_fail() throws Exception {
     createUser("user10");

@@ -17,6 +17,7 @@ public class CommonPasswordRequest {
     this.password = password;
     return this;
   }
+
   public String getPasswordConfirmation() {
     return passwordConfirmation;
   }

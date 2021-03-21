@@ -8,6 +8,7 @@ import bg.codeacademy.spring.gossiptalks.dto.GossipList;
 import bg.codeacademy.spring.gossiptalks.model.User;
 import bg.codeacademy.spring.gossiptalks.service.GossipService;
 import bg.codeacademy.spring.gossiptalks.service.UserService;
+import bg.codeacademy.spring.gossiptalks.validation.ValidText;
 import io.swagger.annotations.ApiParam;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -15,7 +16,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.springframework.data.domain.Page;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,20 +32,17 @@ public class GossipController {
   private UserService userService;
   private GossipService gossipService;
 
-  public GossipController(UserService userService,
-      GossipService gossipService) {
+  public GossipController(UserService userService, GossipService gossipService) {
     this.userService = userService;
     this.gossipService = gossipService;
   }
 
-
   @GetMapping
   public GossipList getGossips(
-      @PageableDefault(page = 0, size = 20)
       @Min(0) @RequestParam(value = "pageNo", required = false, defaultValue = "0") Integer pageNo,
       @Min(0) @Max(50) @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
     String name = getCurrentUserName();
-    User user = userService.getCurrentUser(name);
+    User user = userService.requireUser(name);
     Page<bg.codeacademy.spring.gossiptalks.model.Gossip> gossips = gossipService
         .getGossips(pageNo, pageSize, user);
     return toDTO(gossips);
@@ -53,9 +50,9 @@ public class GossipController {
 
   @PostMapping(consumes = {"multipart/form-data"})
   public Gossip postGossip(
-      @Valid @Size(max = 255) @ApiParam(value = "", required = true) @RequestParam(value = "text", required = true) String text) {
+      @Valid @ValidText @Size(max = 255) @ApiParam(value = "", required = true) @RequestParam(value = "text", required = true) String text) {
     String name = getCurrentUserName();
-    User user = userService.getCurrentUser(name);
+    User user = userService.requireUser(name);
     bg.codeacademy.spring.gossiptalks.model.Gossip gossip = gossipService.createGossip(text, user);
     return toDTO(gossip);
   }
@@ -77,13 +74,7 @@ public class GossipController {
         .setCount(page.getNumberOfElements())
         .setTotal((int) page.getTotalElements())
         .setContent(
-            page.getContent().stream()
-                .sorted(
-                    (bg.codeacademy.spring.gossiptalks.model.Gossip g1, bg.codeacademy.spring.gossiptalks.model.Gossip g2) ->
-                        g2.getId().compareTo(g1.getId()))
-                .map(model -> toDTO(model))
-                .collect(Collectors.toList())
-        );
+            page.getContent().stream().map(GossipController::toDTO).collect(Collectors.toList()));
   }
 
 }

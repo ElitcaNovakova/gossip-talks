@@ -28,6 +28,7 @@ public class GossipList {
     this.pageNumber = pageNumber;
     return this;
   }
+
   public int getPageSize() {
     return pageSize;
   }
@@ -36,6 +37,7 @@ public class GossipList {
     this.pageSize = pageSize;
     return this;
   }
+
   public int getCount() {
     return count;
   }
@@ -44,6 +46,7 @@ public class GossipList {
     this.count = count;
     return this;
   }
+
   public int getTotal() {
     return total;
   }
@@ -52,6 +55,7 @@ public class GossipList {
     this.total = total;
     return this;
   }
+
   public List<Gossip> getContent() {
     return content;
   }

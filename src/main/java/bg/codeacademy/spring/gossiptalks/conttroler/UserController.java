@@ -44,16 +44,16 @@ public class UserController {
 
   @Multipart
   @PostMapping
-  public UserDto createUser(
-      @Valid @ApiParam(value = "", required = true) @RequestParam(value = "password", required = true) String password,
-      @Valid @ApiParam(value = "", required = true) @RequestParam(value = "passwordConfirmation", required = true) String passwordConfirmation,
-      @Valid @ApiParam(value = "", required = true) @RequestParam(value = "email", required = true) String email,
+  public UserResponse createUser(
+      @Valid @RequestParam(value = "password", required = true) String password,
+      @Valid @RequestParam(value = "passwordConfirmation", required = true) String passwordConfirmation,
+      @Valid @RequestParam(value = "email", required = true) String email,
       @Valid @ApiParam(value = "", required = true) @RequestParam(value = "username", required = true) String username,
-      @ApiParam(value = "", required = false) @RequestParam(value = "name", required = false) String name) {
+      @RequestParam(value = "name", required = false) String name) {
     User newUser = userService.register(username, password,
         passwordConfirmation, email,
         name, false);
-    return toDTOUSER(newUser);
+    return toDTO(newUser, newUser);
   }
 
   @GetMapping
@@ -62,39 +62,37 @@ public class UserController {
       @RequestParam(name = "f", required = false, defaultValue = "false") boolean f) {
 
     List<User> users;
-    User userCurrent = userService.getCurrentUser(getCurrentUserName());
+    User userCurrent = userService.requireUser(getCurrentUserName());
     if (name == null) {
       users = userService.getUsers(userCurrent);
     } else {
       users = userService.getUsers(userCurrent, name, f);
     }
-    Stream<User> streamedUsers = users.stream();
-    User current = userService.getCurrentUser(getCurrentUserName());
-    return streamedUsers.map(user -> toDTO(user, current)).toArray(UserResponse[]::new);
+    User current = userService.requireUser(getCurrentUserName());
+    return users.stream()
+        .map(user -> toDTO(user, current))
+        .toArray(UserResponse[]::new);
   }
 
   @Multipart
   @PostMapping(consumes = {"multipart/form-data"}, value = {"/{username}/follow"})
   UserResponse followUser(
-      @ApiParam(value = "", required = true) @PathVariable("username") String username,
-      @ApiParam(value = "", required = true) @RequestParam("follow") boolean follow
+      @PathVariable("username") String username,
+      @RequestParam("follow") boolean follow
   ) {
     String name = getCurrentUserName();
-    User currentUser = userService.getCurrentUser(name);
-    currentUser = userService.followUser(currentUser, username, follow);
-    return toDTO(currentUser, currentUser).setFollowing(follow);
-
+    User currentUser = userService.requireUser(name);
+    User toFollow = userService.followUser(currentUser, username, follow);
+    return toDTO(toFollow, currentUser);
   }
 
   @Multipart
   @PostMapping(consumes = {"multipart/form-data"}, value = {"/me"})
   public UserResponse changeCurrentUserPassword(
-      @ApiParam(value = "", required = true) @RequestParam(value = "password", required = true) String password,
-      @ApiParam(value = "", required = true) @RequestParam(value = "passwordConfirmation", required = true) String passwordConfirmation,
-      @ApiParam(value = "", required = true) @RequestParam(value = "oldPassword", required = true) String oldPassword) {
-    String name = getCurrentUserName();
-    User currentUser = userService.getCurrentUser(name);
-    currentUser = userService
+      @RequestParam(value = "password", required = true) String password,
+      @RequestParam(value = "passwordConfirmation", required = true) String passwordConfirmation,
+      @RequestParam(value = "oldPassword", required = true) String oldPassword) {
+    User currentUser = userService
         .changePassword(getCurrentUserName(), password, passwordConfirmation, oldPassword);
     return toDTO(currentUser, currentUser);
 
@@ -103,7 +101,7 @@ public class UserController {
   @GetMapping("/me")
   public UserResponse currentUser() {
     String name = getCurrentUserName();
-    User currentUser = userService.getCurrentUser(name);
+    User currentUser = userService.requireUser(name);
     return toDTO(currentUser, currentUser);
 
   }
@@ -127,17 +125,6 @@ public class UserController {
         );
   }
 
-  static UserDto toDTOUSER(User user) {
-    return new UserDto()
-        .setEmail(user.getEmail())
-        .setFollowing(false)
-        .setName(user.getName())
-        .setUsername(user.getUsername())
-        .setPassword(user.getPassword())
-        .setLastLoginTime(user.getLastLoginTime())
-        .setRegistrationTime(user.getRegistrationTime()
-        );
-  }
 
   static String getCurrentUserName() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

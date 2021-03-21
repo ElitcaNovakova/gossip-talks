@@ -1,7 +1,6 @@
 package bg.codeacademy.spring.gossiptalks.config;
 
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,18 +20,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
 
-    http.csrf()
+    http
+        // to enable access to h2-console
+        .csrf()
         /**/.disable()
         .cors()
         /**/.disable()
         .headers()
         /**/.frameOptions().sameOrigin().and()
+        // basic authentication
         .httpBasic()
         /**/.and()
         .logout()
         /**/.and()
+        // security permissions
         .authorizeRequests()
-        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
         /**/.antMatchers("/h2-console/**").permitAll()
         /**/.antMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
         /**/.antMatchers("/api/v1/**").authenticated();
