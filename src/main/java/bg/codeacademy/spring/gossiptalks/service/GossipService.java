@@ -48,6 +48,7 @@ public class GossipService {
   public Gossip createGossip(@ValidText String text, User user) {
     OffsetDateTime dateTime = OffsetDateTime.now();
     user.setNumberGossip(user.getNumberGossip()+1);
+    userRepository.save(user);
     return gossipRepository.save(new Gossip()
         .setAuthor(user)
         .setDateTime(dateTime)
