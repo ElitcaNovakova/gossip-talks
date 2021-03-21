@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -43,23 +44,7 @@ class UserControllerTest {
   @Autowired
   private GossipRepository gossipRepository;
 
-  @LocalServerPort
-  int port;
-
-  @BeforeEach
-  public void beforeEachTest() {
-    // init port and logging
-    RestAssured.port = port;
-    RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-  }
-
-  @AfterEach
-  public void afterEachTest() {
-    RestAssured.reset();
-  }
-
   @Test
-  @Transactional
   void given_existing_username_When_register_user_Then_fail() throws Exception {
     createUser("user1");
     mvc.perform(post("/api/v1/users")
@@ -78,7 +63,6 @@ class UserControllerTest {
   }
 
   @Test
-  @Transactional
   void given_correct_credentials_When_register_user_Then_succeed() throws Exception {
 
     mvc.perform(post("/api/v1/users")
@@ -97,7 +81,6 @@ class UserControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser
   void given_the_same_password_When_change_password_Then_fail() throws Exception {
     mvc.perform(post("/api/v1/users/me")
@@ -113,7 +96,6 @@ class UserControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser
   void given_the_different_password_When_change_password_Then_fail() throws Exception {
     mvc.perform(post("/api/v1/users/me")
@@ -129,7 +111,6 @@ class UserControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser("user2")
   void given_correct_credentials_When_change_password_Then_succeed() throws Exception {
     createUser("user2");
@@ -146,7 +127,6 @@ class UserControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser
   void given_follow_user_When_username_is_wrong_Then_fail() throws Exception {
     mvc.perform(post("/api/v1/users/{username}/follow", "alabaa")
@@ -160,7 +140,6 @@ class UserControllerTest {
   }
 
   @Test
-  @Transactional
   @WithMockUser(username = "user3")
   void given_follow_user_When_username_is_right_Then_succeed() throws Exception {
     createUser("user3");

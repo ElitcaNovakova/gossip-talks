@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -42,20 +43,7 @@ class GossipControllerTest {
   private UserRepository userRepository;
   @Autowired
   private GossipRepository gossipRepository;
-  @LocalServerPort
-  int port;
 
-  @BeforeEach
-  public void beforeEachTest() {
-    // init port and logging
-    RestAssured.port = port;
-    RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-  }
-
-  @AfterEach
-  public void afterEachTest() {
-    RestAssured.reset();
-  }
 
   @Test
   @WithMockUser(username = "user7")
