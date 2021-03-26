@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
@@ -101,7 +103,7 @@ public class UserService implements UserDetailsService {
   }
 
   public List<User> getUsers(User currentUser, String name, boolean f) {
-    Set<User> userList = null;
+    Set<User> userList = new HashSet<User>();
     if (!f) {
 
      userList = userRepository.findByUsernameOrNameContainingAllIgnoreCase(name,name);
